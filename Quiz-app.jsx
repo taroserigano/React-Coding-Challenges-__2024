@@ -96,7 +96,8 @@ const UseStateBasics = () => {
 
           <div className='answer-section'>
             {questions[currentQuestion].answerOptions.map((answerOption, index) => (
-              <button key={index} onClick={() => handleAnswerButtonClick(answerOption.isCorrect)}>
+              <button key={index} onClick={() => 
+                handleAnswerButtonClick(answerOption.isCorrect)}>
                 {answerOption.answerText}
               </button>
             ))}
