@@ -17,56 +17,85 @@ const UseStateBasics = () => {
   const [error,setError] =useState(false) 
   
   const [data, setData] = useState([]) 
+  const [debouncedVal, setDebouncedVal] = useState("") 
 
-  useEffect(()=>{ 
-    const fetchData = async() => { 
-      const res = await axios.get("https://jsonplaceholder.typicode.com/users") 
-      setData(res.data) 
-    }
-    fetchData()
-    console.log(data)
-  },[]) 
+  const questions = [
+    {
+      text: 'What is the capital of France?',
+      options: [
+        { text: 'London', isCorrect: false },
+        { text: 'Paris', isCorrect: true },
+        { text: 'Berlin', isCorrect: false },
+        { text: 'Madrid', isCorrect: false },
+      ],
+    },
+    {
+      text: 'What is 2 + 2?',
+      options: [
+        { text: '4', isCorrect: true },
+        { text: '5', isCorrect: false },
+        { text: '6', isCorrect: false },
+        { text: '7', isCorrect: false },
+      ],
+    },
+    {
+      text: 'Who is the CEO of Tesla Motors?',
+      options: [
+        { text: 'Bill Gates', isCorrect: false },
+        { text: 'Steve Jobs', isCorrect: false },
+        { text: 'Elon Musk', isCorrect: true },
+        { text: 'Mark Zuckerberg', isCorrect: false },
+      ],
+    },
+  ];
 
- // useEffect(()=> { 
-    const newData = data.filter((d) => d.name.toLowerCase().includes(text.toLowerCase()))
-  //   setData(newData)
-  // }, [text])
+  const[cur,setCur] =useState(0) 
+  const[score, setScore]=useState(0) 
+  const[show, setShow]=useState(false) 
+
+  const reset = () => { 
+    setCur(0)
+    setScore(0) 
+    setShow(false) 
+  } 
+
+  const handleSelect = (isCorrect)=> { 
+    if(isCorrect) setScore(score+1)
+
+      // const nextIdx = cur+1 
+
+      // if(nextIdx < questions.length){ 
+      //   setCur(nextIdx)
+      // }
+
+      cur+1 < questions.length ? setCur(cur+1) : setShow(true)
+
+  }
 
   return ( 
-<>
+    <> 
+    {show ? (
+      <><p>hi</p>
+      <p>Your score is {score} out of {questions.length}</p>
 
-<input type="text" value={text} onChange={(e)=>setText(e.target.value)} />
-
-
-
-{data && newData.map((u)=> { 
-  return<div key={u.id}>
-  <p>{u.name}</p>
-  </div>
-})}
-</>
-
-
+      </>
+    ) :
+     (<>
+     <p>answer</p>
+      {questions[cur].options.map((q, idx)=> (
+        <button key={idx} onClick={handleSelect}>{q.text}</button>
+      
+      ))
+    }
+     </>
+     )}
+    
+    </>
   )
- 
+
   
 
 };
 
-// const SearchBar = () => { 
-
-
-
-//   return (
-//       <> 
-//       <input type="text" name="search" value={term} 
-//       onChange={(e)=> setTerm(e.target.value)} 
-//       />
-//       {/* <button onClick={}>search</button> */}
-      
-//       </>
-//   )
-
-// }
 
 export default UseStateBasics;
