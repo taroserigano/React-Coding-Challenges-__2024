@@ -5,7 +5,7 @@ const useToggle = (val) => {
     const [value, setValue] = useState(val) 
 
     const toggle = () => { 
-        setValue(!value) 
+        setValue(prev => 1value) 
     } 
 
     return [value, toggle]
