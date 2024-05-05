@@ -1,37 +1,29 @@
-import "./style.css";
-import classNames from "classnames";
+import React, {useState} from "react"
 
-const Pagination = ({ 
-    postsPerPage, length, handlePagination, currentPage,handlePrev, handleNext  }) => {
-  let paginationNumber = []
-  
-  // run for the page number
-  for (let i = 1; i <= Math.ceil(length / postsPerPage); i++) {
-      paginationNumber.push(i);
-  }
+const Pagination = ({ length, page, postsPerPage, handleSelect, handlePrev, handleNext}) => {  
 
-  return ( 
-      <div className='pagination'>
+    let pageNumbers = [] 
+    for(let i=1; i <= Math.ceil(length / postsPerPage); i++){ 
+        pageNumbers.push(i)
+    } 
+    console.log(pageNumbers)
 
-        <button onClick={handlePrev}>Prev</button>
+    return ( 
+        <div className="pagination"> 
+        <button onClick={handlePrev}>PREV</button>
+        <button onClick={()=>handleSelect(1)}>...</button>
 
-        <button onClick={()=>handlePagination(1)}>...</button>
-          {
-              paginationNumber.map((post, idx) => (
-                  <button key={idx} 
-                  
-                  onClick={() => handlePagination(post)} 
-                  
-                  className={currentPage === post ? 'active' : ''}>
-                      {post}
-                  </button>
-              ))
-          }
-                  <button onClick={()=>handlePagination(Math.ceil(length / postsPerPage))}>...</button>
+        {pageNumbers.map((post, idx)=> ( 
+            <button className={post === page ? "active": ""} 
+            onClick={()=>handleSelect(post)}
+            >{post}</button>
+        ))}
+        <button onClick={()=>handleSelect(10)}>...</button>
+        <button onClick={handleNext}>NEXT</button>
 
-          <button onClick={handleNext}>Next</button>
-      </div>
-  )
+        </div>
+    )
+
 }
 
 
