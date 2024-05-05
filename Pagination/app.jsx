@@ -18,73 +18,83 @@ const UseStateBasics = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPge, SetPostsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+  const [postsPerPage, setPostPerPage] = useState(10);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("https://jsonplaceholder.typicode.com/posts");
-        setPosts(response.data);
-        setLoading(false)
-      } catch (error) {
-        console.log(error);
-      }
+  const url = "https://jsonplaceholder.typicode.com/posts"
+
+  useEffect(()=> { 
+
+    const fetchData = async() => { 
+    setLoading(true)
+      try{
+      const res = await axios.get(url) 
+      setPosts(res.data) 
+      setLoading(false)
+
+      } catch(err) { 
+        console.log(err)
     }
-    fetchPosts();
+    }
+    fetchData()
+    console.log(posts)
   }, [])
 
-  // very last page would be "page 10" 
-  const lastPageNumber = currentPage * postsPerPge;
-  // first page is of course "page 1"
-  const firstPageNumber = lastPageNumber - postsPerPge;
+  let lastPage  = page * postsPerPage
+  let firstPage = lastPage - postsPerPage
 
-  const currentPosts = posts.slice(firstPageNumber, lastPageNumber);
+  console.log(firstPage, lastPage)
 
-  const lastPage = posts.length / postsPerPge
+  const currentPosts = posts.slice(firstPage, lastPage) 
 
-  console.log(lastPage, lastPageNumber)
+  const lastPost = posts.length / postsPerPage 
 
-  const handlePagination = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  }
+  const handleSelect = (pageNum) => { 
+    setPage(pageNum) 
+  }  
 
   const handlePrev = () => { 
-    if(currentPage > 1 && currentPage <= lastPage) 
-      setCurrentPage(currentPage-1) 
-    else if(currentPage === 1){
-      setCurrentPage(lastPage)
+    if(page > 1 && page <= lastPage) { 
+      setPage(page-1) 
+    } else if(page === 1){ 
+      setPage(lastPage)
     }
   }
 
   const handleNext = () => { 
-    if(currentPage >= 1 && currentPage < lastPage) 
-      setCurrentPage(currentPage+1) 
-    else if(currentPage === lastPage){
-      setCurrentPage(1)
+    console.log(page)
+    if(page >= 1 && page < lastPost){
+      setPage(page+1)
+    } else if(page === lastPost){ 
+      setPage(1)
     }
-  }
+  } 
 
+  return ( 
+    <> 
+    
+     <Posts posts={currentPosts} loading={loading} />
+    
+    <Pagination 
+      length = {posts.length} 
+      page={page} 
+      postsPerPage={postsPerPage}
 
-
-  return (
-    <div className='container'>
-      <Posts posts={currentPosts} loading={loading} />
-
-      <Pagination 
-      
-      length={posts.length} 
-      postsPerPage={postsPerPge} 
-      handlePagination={handlePagination} 
-
-      currentPage={currentPage} 
-      handlePrev={handlePrev}
+      handleSelect={handleSelect} 
+      handlePrev={handlePrev} 
       handleNext={handleNext}
-
-      />
-    </div>
+    />
+    </>
   )
+
+
+
+
+  
+
+
+
+
 }
 
 
