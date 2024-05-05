@@ -1,20 +1,25 @@
 import React from 'react';
 
-const Posts = ({ posts, loading }) => {
-  if (loading) {
+const Posts = ({posts, loading}) => {
+
+    // if(loading) return <h1>Loading...</h1>
+
+
     return (
-        <h1>Loading.....</h1>
+        <ul>
+        {posts.map((p, idx)=> { 
+
+            return (
+            <li key={p.id}>
+                {p.title}
+            </li>
+            )
+        })}
+       </ul>
+
     )
-}
-return (
-    <>
-        {posts.map((post, index) => (
-            <div className='list' key={post.id}>
-                <p >{post.title}</p>
-            </div>
-        ))}
-    </>
-)
+
+
 }
 
 export default Posts;
