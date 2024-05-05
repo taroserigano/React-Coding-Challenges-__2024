@@ -21,11 +21,11 @@ const useTimeout =(callback, delay) => {
     }, [callback])
 
     useEffect(()=> { 
-        const func = () => savedCallback.current() 
+        // const func = () => savedCallback.current() 
 
         if(delay){ 
 
-            let timeoutId = setTimeout(func, delay) 
+            let timeoutId = setTimeout(savedCallback.current, delay) 
             return ()=> clearTimeout(timeoutId)
         }
     }, [delay]) 
