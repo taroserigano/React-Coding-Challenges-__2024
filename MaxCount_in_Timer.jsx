@@ -21,21 +21,18 @@ const UseStateBasics = () => {
   const [count, setCount] = React.useState(0)
   const [timeLeft, setTimeLeft] = React.useState(10)
 
-  let timerId 
+  const id = useRef(null)
+  
+  useEffect(()=> { 
+    id.current = setInterval(()=> { 
+      setTimeLeft(prev => prev-1)
+    },10)
 
-  const clear = () => window.clearInterval(timerId)
-
-  React.useEffect(() => {
-    timerId = window.setInterval(() => {
-      setTimeLeft((time) => time - 1)
-    }, 1000)
-
-    return clear
   }, [])
 
-  React.useEffect(() => {
-    if (timeLeft === 0) {
-      clear()
+  useEffect(()=> { 
+    if(timeLeft === 0){ 
+      clearInterval(id.current)
     }
   }, [timeLeft])
   
@@ -50,6 +47,4 @@ const UseStateBasics = () => {
     </div>
   );
 }
-
-
 export default UseStateBasics;
