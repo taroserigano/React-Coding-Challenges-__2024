@@ -20,13 +20,14 @@ import useTimeout from "./components/useTimeout"
 const UseStateBasics = () => {
   const [time, setTime] = useState(0) 
   const [isRunning, setIsRunning] = useState(false) 
+  const ref = useRef(null)  
 
   useEffect(()=> { 
 
     let timerId 
     
     if(isRunning){ 
-      timerId = setInterval(()=> { 
+      ref.current = setInterval(()=> { 
         setTime(prev => prev+1) 
       }, 10) 
 
@@ -35,9 +36,15 @@ const UseStateBasics = () => {
     //   clearInterval(timerId) 
     // } 
 
-    return () => clearInterval(timerId)
+    return () => clearInterval(ref.current)
 
   }, [isRunning]) 
+
+  useEffect(()=> { 
+    if(time === 100) {
+      clearInterval(ref.current)
+    }
+  }, [time])
 
   const handleStart = () => { 
     setIsRunning(true) 
