@@ -1,63 +1,50 @@
 
-
-
-
-
-
-
-
-
-
-
 import {useState, useEffect, useRef} from "react" 
 
-const useTimeout =(callback, delay) => { 
+const useTimeout =(callback,delay) => { 
 
-    const savedCallback = useRef() 
-
-    // update callback 
-    useEffect(()=> { 
-        savedCallback.current = callback
-    }, [callback])
+    const ref = useRef(null) 
 
     useEffect(()=> { 
-        // const func = () => savedCallback.current() 
+        ref.current = callback 
+    }, [callback]) 
 
-        if(delay){ 
+    useEffect(()=> { 
 
-            let timeoutId = setTimeout(savedCallback.current, delay) 
-            return ()=> clearTimeout(timeoutId)
-        }
+        let timer = setTimeout(() => { 
+            ref.current() 
+        }, delay) 
+
+        return  () => clearTimeout(timer)
+
     }, [delay]) 
-
+ 
 }
 
 export default useTimeout
 
 
 
-
-
-
 // const UseStateBasics = () => {
 
-//   const [val, setVal] = useState(false) 
+//   const [search, setSearch] = useState("") 
+//   const [data, setData] = useState([]) 
+//   const [show, setShow] = useState(false)
 
-//   useTimeout(()=> { 
-//     setVal("hello")
-//   }, 1000)
+//   const display = () => { 
+//     setSearch("Helloooo") 
+//     setShow(prev => !prev)  
+//   } 
 
+//   useTimeout(display, 1000)
+  
 //   return ( 
 //     <> 
-//     {val && <p>Hello</p>}
+//     {show && <p>{search}</p>}
 //     </>
 //   )
-  
-
-// };
 
 
-// export default UseStateBasics;
 
 
 
