@@ -1,91 +1,94 @@
-import React, {useState, useEffect} from 'react' 
+import React, {useState, useEffect, useRef} from 'react' 
 import { data} from "../../../data" 
-const url = "https://api.github.com/users" 
+// const url = "https://api.github.com/users" 
 
 import axios from "axios"
 
-import Note from "./Note" 
-import CreateArea from "./CreateArea" 
+import Note from "./components/Note" 
 import LoginForm from './LoginForm';
 
+import "./style.css";
+
+import Posts from './components/Posts';
+import Pagination from './components/Pagination';
+import useFocus from  "./components/useFocus"
+import useToggle from "./components/useToggle"
+import useTimeout from "./components/useTimeout"
 // import SearchBar from "./SearchBar"
+
+import itemsData from "./items.json"
+const url = "https://jsonplaceholder.typicode.com/posts"
+
 
 const UseStateBasics = () => {
 
-  const[text,setText] = useState("")
-  
-  const [error,setError] =useState(false) 
-  
-  const [data, setData] = useState([]) 
-  const [timeoutId, setTimeoutId] = useState(null) 
+  const [inputValue, setInputValue] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const debounceTimeoutRef = useRef(null);
 
-  const fetchData = async() => { 
-    const res = await axios.get(`https://api.datamuse.com/words?rel_syn=${text}`)  
-console.log(res.data)
-    setData(res.data) 
-    console.log(data, res)
-  }
-
-  useEffect(()=> { 
-    searchBar()
-  }, [text])
-
-  const searchBar = () => { 
-
-
-    clearTimeout(timeoutId) 
-
-    setTimeoutId(
-      setTimeout(() => { 
-
-        fetchData() 
-        
-      }, 1000)
-    )
-  
-  }
-  
-
-  useEffect(()=> { 
-    return ()=>{
-      clearTimeout(timeoutId)
+  const debouncedSearch = () => { 
+        // This useEffect hook will run whenever inputValue changes.
+    // It clears the previous debounce timeout and sets a new one.
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
-  }, [timeoutId])
 
-  return ( <> 
+    // Set a new timeout to fetch search results after 500 milliseconds.
+    debounceTimeoutRef.current = setTimeout(() => {
+        fetchSearchResults(inputValue);
+      
+    }, 100);
 
-  <input type="text" value={text} onChange={e=>setText(e.target.value)}/>
-  
-  {data.map((d, idx) => { 
-    return ( 
-      <div key={idx}>
-      <p>{d.word}</p>
-      </div>
-    )
-  })}
-  
-  </>)
+    // Clean up the timeout when the component unmounts or when inputValue changes.
+    return () => {
+      clearTimeout(debounceTimeoutRef.current);
+    };
+  }
 
+  useEffect(() => {
+    debouncedSearch()
+  }, [inputValue]);
 
- 
-  
+  const fetchSearchResults = async (query) => {
+    try {
+      const response = await fetch(`https://jsonplaceholder.typicode.com/posts`);
+      const data = await response.json();
+      // const searchedData = data.map((post)=> { 
+      //   return post.title.toLowerCase().includes(inputValue.toLowerCase())
+      // })
+      const filtered = data.filter(post => post.title.toLowerCase().includes(inputValue.toLowerCase()))
+      console.log(filtered)
 
+      setSearchResults(filtered);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+        placeholder="Search posts..."
+      />
+      <ul>
+        {searchResults.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
-// const SearchBar = () => { 
+  
 
 
 
-//   return (
-//       <> 
-//       <input type="text" name="search" value={term} 
-//       onChange={(e)=> setTerm(e.target.value)} 
-//       />
-//       {/* <button onClick={}>search</button> */}
-      
-//       </>
-//   )
-
-// }
 
 export default UseStateBasics;
