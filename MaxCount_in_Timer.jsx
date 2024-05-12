@@ -28,6 +28,8 @@ const UseStateBasics = () => {
       setTimeLeft(prev => prev-1)
     },10)
 
+    return ()=>clearInterval(id.current)
+
   }, [])
 
   useEffect(()=> { 
