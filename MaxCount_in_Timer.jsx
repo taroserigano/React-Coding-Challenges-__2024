@@ -1,52 +1,66 @@
-import React, {useState, useEffect, useRef} from 'react' 
-import { data} from "../../../data" 
-const url = "https://api.github.com/users" 
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-import axios from "axios"
-
-import Note from "./Note" 
-import CreateArea from "./CreateArea" 
-import LoginForm from './LoginForm';
+import Note from "./components/Note";
+import LoginForm from "./LoginForm";
 
 import "./style.css";
 
-import Posts from './components/Posts';
-import Pagination from './components/Pagination';
-import useFocus from  "./components/useFocus"
-import useToggle from "./components/useToggle"
-import useTimeout from "./components/useTimeout"
-// import SearchBar from "./SearchBar"
+import Posts from "./components/Posts";
+import Pagination from "./components/Pagination";
+import useFocus from "./components/useFocus";
+import useToggle from "./components/useToggle";
+import useTimeout from "./components/useTimeout";
+import useArray from "./components/useArray";
+import itemsData from "./items.json";
+
+const url = "https://jsonplaceholder.typicode.com/posts";
+
+const initialState = {
+  userName: "",
+  fullName: "",
+  age: "",
+};
 
 const UseStateBasics = () => {
-  const [count, setCount] = React.useState(0)
-  const [timeLeft, setTimeLeft] = React.useState(10)
+  const [count, setCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(10);
 
-  const id = useRef(null)
-  
-  useEffect(()=> { 
-    id.current = setInterval(()=> { 
-      setTimeLeft(prev => prev-1)
-    },10)
+  const ref = useRef(null);
 
-    return ()=>clearInterval(id.current)
-
-  }, [])
-
-  useEffect(()=> { 
-    if(timeLeft === 0){ 
-      clearInterval(id.current)
+  useEffect(() => {
+    if (timeLeft > 0) {
+      ref.current = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 100);
     }
-  }, [timeLeft])
-  
+
+    return () => clearInterval(ref.current);
+  }, [timeLeft]);
+
+  const reset = () => {
+    setTimeLeft(10);
+    setCount(0);
+    ref.current = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 100);
+  };
+
   return (
-    <div className="App">
-      <h1>{count}</h1>
-      <h3>Time left: {timeLeft} seconds</h3>
-      {timeLeft === 0 ? null : 
-        <button onClick={() => setCount((c) => c + 1)}>
-          +
-        </button>}
+    <div>
+      <h2>{count}</h2>
+      <h3>{timeLeft} seconds left</h3>
+      <button
+        onClick={() => setCount((prev) => prev + 1)}
+        disabled={timeLeft === 0}
+      >
+        +
+      </button>
+      <button onClick={reset} disabled={timeLeft !== 0}>
+        Reset
+      </button>
     </div>
   );
-}
+};
+
 export default UseStateBasics;
