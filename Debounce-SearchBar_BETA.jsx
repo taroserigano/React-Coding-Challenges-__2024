@@ -45,9 +45,9 @@ const UseStateBasics = () => {
 
   const debounced = () => { 
 
-    if(ref.current){
-      clearTimeout(ref.current) 
-    } 
+    // if(ref.current){
+    //   clearTimeout(ref.current) 
+    // } 
 
     ref.current = setTimeout(() => {
       searchData() 
