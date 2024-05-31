@@ -1,89 +1,82 @@
-import React, {useState, useEffect} from 'react' 
-import { data} from "../../../data" 
-const url = "https://api.github.com/users" 
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-import axios from "axios"
+import Note from "./components/Note";
+import CreateArea from "./components/CreateArea";
+import LoginForm from "./LoginForm";
+import Posts from "./components/Posts";
+import Pagination from "./components/Pagination";
+import useFocus from "./components/useFocus";
+import useToggle from "./components/useToggle";
+import useTimeout from "./components/useTimeout";
+import useArray from "./components/useArray";
+import itemsData from "./items.json";
 
-import Note from "./Note" 
-import CreateArea from "./CreateArea" 
-import LoginForm from './LoginForm';
+import "./style.css";
 
-// import SearchBar from "./SearchBar"
+const url = "https://jsonplaceholder.typicode.com/posts";
 
 const UseStateBasics = () => {
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [term, setTerm] = useState("");
+  const ref = useRef(null);
 
-  const[text,setText] = useState("")
-  
-  const [error,setError] =useState(false) 
-  
-  const [data, setData] = useState([]) 
-  const [debouncedVal, setDebouncedVal] = useState("") 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(url);
+      setData(response.data);
+      setFilteredData(response.data); // Set both data and filteredData initially
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
 
-  const fetchData = async(text) => { 
-    const res = await axios.get(`https://api.datamuse.com/words?rel_syn=${text}`)  
-console.log(res.data)
-    setData(res.data) 
-    console.log(data, res)
-  }
+  useEffect(() => {
+    fetchData();
+  }, []);
 
+  const searchTerm = () => {
+    const filtered = data.filter((r) =>
+      r.title.toLowerCase().includes(term.toLowerCase())
+    );
 
-  const useDebounce = (value, delay) => { 
+    setFilteredData(filtered);
+  };
 
-    useEffect(()=> { 
-      const timer = setTimeout(()=> { 
-        setDebouncedVal(value) 
-      }, delay) 
+  const debounced = () => {
+    clearTimeout(ref.current);
 
-      return ()=> { 
-        clearTimeout(timer)
-      }
-    }, [value, delay])
+    ref.current = setTimeout(() => {
+      searchTerm();
+    }, 300);
+  };
 
-    return debouncedVal
-  }
-  
-  const debouncedSearch = useDebounce(text, 500)
+  useEffect(() => {
+    if (term) {
+      debounced();
+    } else {
+      setFilteredData(data); 
+    }
+  }, [term, data]);
 
-  useEffect(()=> { 
-
-    fetchData(debouncedSearch)
-  }, [debouncedSearch])
-
-
-  return ( <> 
-
-  <input type="text" value={text} onChange={e=>setText(e.target.value)}/>
-  
-  {data.map((d, idx) => { 
-    return ( 
-      <div key={idx}>
-      <p>{d.word}</p>
-      </div>
-    )
-  })}
-  
-  </>)
-
-
- 
-  
-
+  return (
+    <>
+      <h4>{term}</h4>
+      <input
+        type="text"
+        value={term}
+        name="term"
+        onChange={(e) => setTerm(e.target.value)}
+      />
+      {filteredData.map((d) => (
+        <div key={d.id}>
+          <p>{d.title}</p>
+        </div>
+      ))}
+    </>
+  );
 };
-
-// const SearchBar = () => { 
-
-
-
-//   return (
-//       <> 
-//       <input type="text" name="search" value={term} 
-//       onChange={(e)=> setTerm(e.target.value)} 
-//       />
-//       {/* <button onClick={}>search</button> */}
-      
-//       </>
-//   )
-
-// }
 
 export default UseStateBasics;
