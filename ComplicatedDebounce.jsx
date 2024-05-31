@@ -27,7 +27,6 @@ const UseStateBasics = () => {
       const response = await axios.get(url);
       setData(response.data);
       setFilteredData(response.data); // Set both data and filteredData initially
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
@@ -41,8 +40,6 @@ const UseStateBasics = () => {
     const filtered = data.filter((r) =>
       r.title.toLowerCase().includes(term.toLowerCase())
     );
-    console.log(filtered);
-    console.log(term);
     setFilteredData(filtered);
   };
 
@@ -60,7 +57,7 @@ const UseStateBasics = () => {
     } else {
       setFilteredData(data); // If term is empty, reset filteredData to original data
     }
-  }, [term, data]);
+  }, [term]);
 
   return (
     <>
