@@ -1,51 +1,52 @@
+import { useEffect, useRef, useState } from "react";
 
-import {useState, useEffect, useRef} from "react" 
+function useTimeout(initialTime = 0, delay = 100) {
+  const [time, setTime] = useState(initialTime);
+  const ref = useRef(null);
 
-const useTimeout =(callback,delay) => { 
+  const start = () => {
+    if (!ref.current) {
+      ref.current = setInterval(() => {
+        setTime((prev) => prev + 1);
+      }, delay);
+    }
+  };
 
-    const ref = useRef(null) 
+  const stop = () => {
+    clearInterval(ref.current);
+    ref.current = null;
+  };
 
-    useEffect(()=> { 
-        ref.current = callback 
-    }, [callback]) 
+  const reset = () => {
+    stop();
+    setTime(0);
+  };
 
-    useEffect(()=> { 
-
-        let timer = setTimeout(() => { 
-            ref.current() 
-        }, delay) 
-
-        return  () => clearTimeout(timer)
-
-    }, [delay]) 
- 
+  return { reset, time, stop, start };
 }
 
-export default useTimeout
-
+export default useTimeout;
 
 
 // const UseStateBasics = () => {
+//   const [data, setData] = useState([]);
+//   const [filteredData, setFilteredData] = useState([]);
+//   const [term, setTerm] = useState("");
+//   const ref = useRef(null);
+//   const [search, setSearch] = useState("");
+//   const [show, setShow] = useState(false);
+//   const [count, setCount] = useState(0);
 
-//   const [search, setSearch] = useState("") 
-//   const [data, setData] = useState([]) 
-//   const [show, setShow] = useState(false)
+//   const { reset, start, stop, time } = useTimeout(0, 100);
 
-//   const display = () => { 
-//     setSearch("Helloooo") 
-//     setShow(prev => !prev)  
-//   } 
+//   return (
+//     <div>
+//       <p>Timer: {time} seconds</p>
+//       <button onClick={start}>Start Timer</button>
+//       <button onClick={stop}>Stop Timer</button>
+//       <button onClick={reset}>Reset Timer</button>
+//     </div>
+//   );
+// };
 
-//   useTimeout(display, 1000)
-  
-//   return ( 
-//     <> 
-//     {show && <p>{search}</p>}
-//     </>
-//   )
-
-
-
-
-
-
+// export default UseStateBasics;
