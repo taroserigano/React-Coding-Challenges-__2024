@@ -1,16 +1,18 @@
 import React, { useState } from "react";
+import Note from "./Note";
+import uuid from "react-uuid";
 
 function CreateArea({ addNote }) {
   const [note, setNote] = useState({
-    id: "",
-    title: "",
+    id: uuid() || null, // Date.now() 
+    titie: "" || null,
     content: "",
   });
 
   const handleChange = (e) => {
     setNote({
       ...note,
-      id: Date.now(),
+      id: uuid(),
       [e.target.name]: e.target.value,
     });
   };
@@ -33,16 +35,18 @@ function CreateArea({ addNote }) {
           name="title"
           value={note.title}
           onChange={handleChange}
-          placeholder="title"
+          placeholder="Title"
         />
-        <input
+        <textarea
           type="text"
           name="content"
           value={note.content}
           onChange={handleChange}
-          placeholder="content"
+          placeholder="Take a note..."
         />
-        <button type="submit">submit</button>
+        <button type="submit" onClick={handleSubmit}>
+          Add
+        </button>
       </form>
     </>
   );
