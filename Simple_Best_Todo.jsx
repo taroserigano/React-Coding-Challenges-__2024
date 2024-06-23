@@ -36,13 +36,13 @@ const UseStateBasics = () => {
   const [editingID, setEditingID] = useState(null);
 
   const addTodo = () => {
-    if (text !== "") {
-      setTodos([...todos, { id: Date.now(), text: text }]);
+    if (text.trim()) {
+      setTodos([...todos, { id: Date.now(), text }]);
       setText("");
     }
   };
 
-  const deletetodo = (id) => {
+  const deleteTodo = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
@@ -70,8 +70,7 @@ const UseStateBasics = () => {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="write..."
-        // write key press enter for add todo
+        placeholder="Enter a todo"
         onKeyPress={(e) => {
           if (e.key === "Enter") {
             isEditing ? updateTodo() : addTodo();
@@ -79,16 +78,18 @@ const UseStateBasics = () => {
         }}
       />
       <button onClick={isEditing ? updateTodo : addTodo}>
-        {isEditing ? "Update" : "Add"}
+        {isEditing ? "Edit" : "Add"}
       </button>
       <ul>
-        {todos.map((todo, idx) => (
-          <li key={idx}>
-            {todo.text}
-            <button onClick={() => setToEdit(todo)}>Edit</button>
-            <button onClick={() => deletetodo(todo.id)}>Delete</button>
-          </li>
-        ))}
+        {todos.map((todo, idx) => {
+          return (
+            <li key={idx}>
+              {todo.text}
+              <button onClick={() => setToEdit(todo)}>Edit</button>
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
